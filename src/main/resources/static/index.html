@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Notice Board</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Digital Notice Board</h1>
+        <p>Important campus updates, all in one place.</p>
+      </header>
+
+      <section id="loginSection" class="card">
+        <h2>Admin Login</h2>
+        <form id="loginForm">
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="admin" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter password" required />
+          </div>
+
+          <button type="submit">Login</button>
+        </form>
+        <p id="loginMessage" class="message"></p>
+      </section>
+
+      <section id="noticeSection" class="card hidden">
+        <h2>Create Notice</h2>
+        <p id="sessionMessage" class="message"></p>
+        <button id="logoutButton" type="button" class="secondary-button">Log out</button>
+        <form id="noticeForm" class="form-grid">
+          <div class="field">
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" required />
+          </div>
+
+          <div class="field field-full">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+          </div>
+
+          <div class="field">
+            <label for="department">Department</label>
+            <input id="department" name="department" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="academicYear">Academic Year</label>
+            <input id="academicYear" name="academicYear" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="publishedAt">Published At</label>
+            <input id="publishedAt" name="publishedAt" type="datetime-local" required />
+          </div>
+
+          <div class="field">
+            <label for="expiryDate">Expiry Date</label>
+            <input id="expiryDate" name="expiryDate" type="date" required />
+          </div>
+
+          <button type="submit">Publish Notice</button>
+        </form>
+        <p id="noticeMessage" class="message"></p>
+      </section>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
