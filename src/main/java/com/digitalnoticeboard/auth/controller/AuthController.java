@@ -2,6 +2,7 @@ package com.digitalnoticeboard.auth.controller;
 
 import com.digitalnoticeboard.auth.dto.LoginRequest;
 import com.digitalnoticeboard.auth.dto.LoginResponse;
+import com.digitalnoticeboard.auth.dto.RegisterRequest;
 import com.digitalnoticeboard.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,24 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/auth/register")
+    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(new RegistrationResponse("Registration successful. Please log in."));
+    }
+
+    public static class RegistrationResponse {
+        private final String message;
+
+        public RegistrationResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

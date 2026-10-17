@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class NoticeCreationService {
@@ -57,6 +58,12 @@ public class NoticeCreationService {
 
         Notice savedNotice = noticeRepository.save(notice);
         return NoticeResponse.fromEntity(savedNotice);
+    }
+
+    public List<NoticeResponse> getNotices() {
+        return noticeRepository.findAllByOrderByPublishedAtDesc().stream()
+            .map(NoticeResponse::fromEntity)
+            .toList();
     }
 
     private String trimToNull(String value) {
