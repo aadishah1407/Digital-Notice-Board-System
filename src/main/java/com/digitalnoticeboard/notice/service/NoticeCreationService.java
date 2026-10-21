@@ -44,6 +44,9 @@ public class NoticeCreationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expiry date is required");
         }
 
+        LocalDateTime publishedAt = request.getPublishedAt() == null ? LocalDateTime.now() : request.getPublishedAt();
+        validateExpiryDate(expiryDate, publishedAt);
+
         User creator = userRepository.findByUsername(creatorUsername)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated admin not found"));
 
@@ -52,7 +55,7 @@ public class NoticeCreationService {
         notice.setDescription(description);
         notice.setDepartment(department);
         notice.setAcademicYear(academicYear);
-        notice.setPublishedAt(request.getPublishedAt() == null ? LocalDateTime.now() : request.getPublishedAt());
+        notice.setPublishedAt(publishedAt);
         notice.setExpiryDate(expiryDate);
         notice.setCreator(creator);
 
@@ -64,6 +67,56 @@ public class NoticeCreationService {
         return noticeRepository.findAllByOrderByPublishedAtDesc().stream()
             .map(NoticeResponse::fromEntity)
             .toList();
+    }
+
+    public NoticeResponse updateNotice(Long id, NoticeRequest request) {
+        if (request == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Notice payload is required");
+        }
+
+        Notice notice = noticeRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notice not found."));
+
+        String title = trimToNull(request.getTitle());
+        String description = trimToNull(request.getDescription());
+        String department = trimToNull(request.getDepartment());
+        String academicYear = trimToNull(request.getAcademicYear());
+        LocalDateTime publishedAt = request.getPublishedAt() == null ? notice.getPublishedAt() : request.getPublishedAt();
+        LocalDate expiryDate = request.getExpiryDate();
+
+        if (title == null || description == null || department == null || academicYear == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title, description, department and academic year are required");
+        }
+        if (expiryDate == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expiry date is required");
+        }
+
+        validateExpiryDate(expiryDate, publishedAt);
+
+        notice.setTitle(title);
+        notice.setDescription(description);
+        notice.setDepartment(department);
+        notice.setAcademicYear(academicYear);
+        notice.setPublishedAt(publishedAt);
+        notice.setExpiryDate(expiryDate);
+
+        return NoticeResponse.fromEntity(noticeRepository.save(notice));
+    }
+
+    public void deleteNotice(Long id) {
+        if (!noticeRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notice not found.");
+        }
+        noticeRepository.deleteById(id);
+    }
+
+    private void validateExpiryDate(LocalDate expiryDate, LocalDateTime publishedAt) {
+        if (!expiryDate.isAfter(publishedAt.toLocalDate())) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Expiry date must be later than the publication date."
+            );
+        }
     }
 
     private String trimToNull(String value) {
