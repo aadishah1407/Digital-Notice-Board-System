@@ -25,6 +25,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
+        return authenticate(request, null);
+    }
+
+    @Override
+    public LoginResponse loginAsRole(LoginRequest request, String expectedRole) {
+        if (expectedRole == null || expectedRole.isBlank()) {
+            return LoginResponse.failed("User role is required");
+        }
+        return authenticate(request, normalizeRole(expectedRole));
+    }
+
+    private LoginResponse authenticate(LoginRequest request, String expectedRole) {
         if (request == null) {
             return LoginResponse.failed("Username and password are required");
         }
@@ -46,15 +58,31 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userOptional.get();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())
+            || (expectedRole != null && !expectedRole.equals(normalizeRole(user.getRole())))) {
             return LoginResponse.failed("Invalid username or password");
         }
 
-        return LoginResponse.success(user.getUsername(), user.getRole());
+        return LoginResponse.success(user.getUsername(), user.getRole(), user.getDepartment(), user.getAcademicYear());
     }
 
     @Override
     public void register(RegisterRequest request) {
+        saveUser(request, "ROLE_ADMIN", null, null);
+    }
+
+    @Override
+    public void registerStudent(RegisterRequest request) {
+        if (request == null || request.getDepartment() == null || request.getDepartment().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Department is required");
+        }
+        if (request.getAcademicYear() == null || request.getAcademicYear().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Academic year is required");
+        }
+        saveUser(request, "ROLE_STUDENT", request.getDepartment().trim(), request.getAcademicYear().trim());
+    }
+
+    private void saveUser(RegisterRequest request, String role, String department, String academicYear) {
         if (request == null || request.getUsername() == null || request.getUsername().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is required");
         }
@@ -70,6 +98,10 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "That username is already registered");
         }
 
-        userRepository.save(new User(username, passwordEncoder.encode(request.getPassword()), "ROLE_ADMIN"));
+        userRepository.save(new User(username, passwordEncoder.encode(request.getPassword()), role, department, academicYear));
+    }
+
+    private String normalizeRole(String role) {
+        return role.startsWith("ROLE_") ? role : "ROLE_" + role;
     }
 }

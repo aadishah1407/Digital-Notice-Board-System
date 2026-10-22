@@ -24,6 +24,12 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    @Column(length = 120)
+    private String department;
+
+    @Column(length = 40)
+    private String academicYear;
+
     public User() {
     }
 
@@ -31,6 +37,12 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String username, String password, String role, String department, String academicYear) {
+        this(username, password, role);
+        this.department = department;
+        this.academicYear = academicYear;
     }
 
     public Long getId() {
@@ -63,5 +75,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
     }
 }

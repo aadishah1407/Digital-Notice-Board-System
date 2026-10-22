@@ -12,74 +12,24 @@
         <div class="brand-mark" aria-hidden="true">NB</div>
         <p class="eyebrow">CAMPUS COMMUNICATIONS</p>
         <h1>Digital Notice Board</h1>
-        <p>Important campus updates, all in one place.</p>
+        <p>Choose your portal to continue.</p>
       </header>
-
-      <section id="loginSection" class="card auth-card">
-        <div class="section-kicker">ADMIN PORTAL</div>
-        <h2 id="authHeading">Welcome back</h2>
-        <p class="section-copy" id="authCopy">Sign in to manage campus notices.</p>
-        <form id="loginForm">
-          <div class="field">
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text" placeholder="Your username" autocomplete="username" required />
-          </div>
-          <div class="field">
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="At least 8 characters" autocomplete="current-password" required />
-          </div>
-          <button type="submit">Sign in <span aria-hidden="true">→</span></button>
-        </form>
-        <p id="loginMessage" class="message" role="status"></p>
-        <p class="auth-switch" id="authSwitch">New to the notice board? <button id="showRegister" class="text-button" type="button">Create an account</button></p>
-
-        <form id="registerForm" class="hidden">
-          <div class="field">
-            <label for="registerUsername">Username</label>
-            <input id="registerUsername" name="username" type="text" placeholder="Choose a username" autocomplete="username" maxlength="100" required />
-          </div>
-          <div class="field">
-            <label for="registerPassword">Password</label>
-            <input id="registerPassword" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required />
-          </div>
-          <button type="submit">Create account <span aria-hidden="true">→</span></button>
-          <p id="registerMessage" class="message" role="status"></p>
-          <p class="auth-switch">Already have an account? <button id="showLogin" class="text-button" type="button">Sign in</button></p>
-        </form>
-      </section>
-
-      <section id="dashboardSection" class="hidden">
-        <div class="dashboard-topbar">
-          <div><p class="eyebrow">ADMIN DASHBOARD</p><h2>Notices</h2></div>
-          <div class="topbar-actions"><span id="sessionMessage" class="user-chip"></span><button id="logoutButton" type="button" class="secondary-button">Log out</button></div>
-        </div>
-        <div class="dashboard-heading">
-          <div><h3>Notice board</h3><p>Manage and review your campus announcements.</p></div>
-          <button id="openCreateButton" class="add-button" type="button"><span class="plus-icon" aria-hidden="true">+</span><span>Create notice</span></button>
-        </div>
-        <p id="dashboardMessage" class="message" role="status"></p>
-        <div id="noticeList" class="notice-list" aria-live="polite"></div>
-      </section>
-
-      <section id="createSection" class="card create-card hidden" aria-labelledby="createHeading">
-        <div class="create-topline">
-          <div><p class="eyebrow" id="formEyebrow">NEW ANNOUNCEMENT</p><h2 id="createHeading">Create a notice</h2></div>
-          <button id="closeCreateButton" class="close-button" type="button" aria-label="Close notice form">×</button>
-        </div>
-        <p class="section-copy">Share a clear update with your campus community.</p>
-        <form id="noticeForm" class="form-grid">
-          <div class="field field-full"><label for="title">Notice title</label><input id="title" name="title" type="text" placeholder="e.g. Semester examination schedule" required /></div>
-          <div class="field field-full"><label for="description">Description</label><textarea id="description" name="description" rows="4" placeholder="Add the important details..." required></textarea></div>
-          <div class="field"><label for="department">Department</label><input id="department" name="department" type="text" placeholder="e.g. Student Affairs" required /></div>
-          <div class="field"><label for="academicYear">Academic year</label><input id="academicYear" name="academicYear" type="text" placeholder="e.g. 2026–2027" required /></div>
-          <div class="field"><label for="publishedAt">Publish date and time</label><input id="publishedAt" name="publishedAt" type="datetime-local" required /></div>
-          <div class="field"><label for="expiryDate">Expiry date</label><input id="expiryDate" name="expiryDate" type="date" required /></div>
-          <div class="form-actions"><button type="button" id="cancelCreateButton" class="secondary-button">Cancel</button><button type="submit" id="submitNoticeButton">Create notice</button></div>
-        </form>
-        <p id="noticeMessage" class="message" role="status"></p>
+      <section class="portal-grid" aria-label="Choose a portal">
+        <a class="portal-card admin-portal" href="/admin.html">
+          <span class="portal-icon" aria-hidden="true">✦</span>
+          <span class="eyebrow">FACULTY & ADMIN</span>
+          <strong>Admin portal</strong>
+          <span class="portal-description">Create and manage campus notices.</span>
+          <span class="portal-link">Continue as admin <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="portal-card student-portal" href="/student.html">
+          <span class="portal-icon" aria-hidden="true">▤</span>
+          <span class="eyebrow">STUDENT ACCESS</span>
+          <strong>Student portal</strong>
+          <span class="portal-description">View notices for your department and academic year.</span>
+          <span class="portal-link">Continue as student <span aria-hidden="true">→</span></span>
+        </a>
       </section>
     </main>
-
-    <script src="/app.js"></script>
   </body>
 </html>

@@ -6,6 +6,8 @@ public class LoginResponse {
     private String username;
     private String role;
     private String message;
+    private String department;
+    private String academicYear;
 
     public LoginResponse() {
     }
@@ -19,6 +21,13 @@ public class LoginResponse {
 
     public static LoginResponse success(String username, String role) {
         return new LoginResponse(true, username, role, "Login successful");
+    }
+
+    public static LoginResponse success(String username, String role, String department, String academicYear) {
+        LoginResponse response = success(username, role);
+        response.setDepartment(department);
+        response.setAcademicYear(academicYear);
+        return response;
     }
 
     public static LoginResponse failed(String message) {
@@ -55,5 +64,21 @@ public class LoginResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
     }
 }

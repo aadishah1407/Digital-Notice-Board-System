@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Portal | Digital Notice Board</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="site-header">
+        <a class="back-link" href="/">← Choose portal</a>
+        <div class="brand-mark" aria-hidden="true">NB</div>
+        <p class="eyebrow">STUDENT PORTAL</p>
+        <h1>Digital Notice Board</h1>
+        <p>Updates selected for your department and academic year.</p>
+      </header>
+
+      <section id="studentAuthSection" class="card auth-card">
+        <div class="section-kicker">STUDENT ACCESS</div>
+        <h2 id="studentAuthHeading">Student sign in</h2>
+        <p class="section-copy" id="studentAuthCopy">Sign in to see notices relevant to you.</p>
+        <form id="studentLoginForm">
+          <div class="field"><label for="studentUsername">Username</label><input id="studentUsername" type="text" autocomplete="username" required /></div>
+          <div class="field"><label for="studentPassword">Password</label><input id="studentPassword" type="password" autocomplete="current-password" required /></div>
+          <button type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="studentLoginMessage" class="message" role="status"></p>
+        <p id="studentAuthSwitch" class="auth-switch">New student? <button id="showStudentRegister" class="text-button" type="button">Create a student account</button></p>
+        <form id="studentRegisterForm" class="hidden">
+          <div class="field"><label for="newStudentUsername">Username</label><input id="newStudentUsername" type="text" autocomplete="username" maxlength="100" required /></div>
+          <div class="field"><label for="newStudentPassword">Password</label><input id="newStudentPassword" type="password" autocomplete="new-password" minlength="8" required /></div>
+          <div class="field"><label for="studentDepartment">Department</label><input id="studentDepartment" type="text" placeholder="e.g. Computer Science" maxlength="120" required /></div>
+          <div class="field"><label for="studentAcademicYear">Academic year</label><input id="studentAcademicYear" type="text" placeholder="e.g. 2026-2027" maxlength="40" required /></div>
+          <button type="submit">Register as student <span aria-hidden="true">→</span></button>
+          <p id="studentRegisterMessage" class="message" role="status"></p>
+          <p class="auth-switch">Already registered? <button id="showStudentLogin" class="text-button" type="button">Sign in</button></p>
+        </form>
+      </section>
+
+      <section id="studentBoardSection" class="hidden">
+        <div class="dashboard-topbar">
+          <div><p class="eyebrow">STUDENT NOTICE BOARD</p><h2>Your notices</h2></div>
+          <div class="topbar-actions"><span id="studentSessionMessage" class="user-chip"></span><button id="studentLogoutButton" type="button" class="secondary-button">Log out</button></div>
+        </div>
+        <div class="dashboard-heading"><div><h3>For your department</h3><p id="studentFilterDescription"></p></div></div>
+        <p id="studentBoardMessage" class="message" role="status"></p>
+        <div id="studentNoticeList" class="notice-list" aria-live="polite"></div>
+      </section>
+    </main>
+    <script src="/student.js"></script>
+  </body>
+</html>

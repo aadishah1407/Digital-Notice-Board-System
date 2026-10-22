@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.digitalnoticeboard.auth.model.User;
 
 @Service
 public class NoticeCreationService {
@@ -65,6 +66,18 @@ public class NoticeCreationService {
 
     public List<NoticeResponse> getNotices() {
         return noticeRepository.findAllByOrderByPublishedAtDesc().stream()
+            .map(NoticeResponse::fromEntity)
+            .toList();
+    }
+
+    public List<NoticeResponse> getNoticesForStudent(User student) {
+        if (student == null || student.getDepartment() == null || student.getAcademicYear() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student department and academic year are required");
+        }
+        return noticeRepository
+            .findByDepartmentIgnoreCaseAndAcademicYearIgnoreCaseAndExpiryDateGreaterThanEqualAndPublishedAtLessThanEqualOrderByPublishedAtDesc(
+                student.getDepartment(), student.getAcademicYear(), LocalDate.now(), LocalDateTime.now())
+            .stream()
             .map(NoticeResponse::fromEntity)
             .toList();
     }

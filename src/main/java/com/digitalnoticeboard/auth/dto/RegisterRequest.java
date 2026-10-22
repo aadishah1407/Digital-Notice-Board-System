@@ -13,6 +13,12 @@ public class RegisterRequest {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
+    @Size(max = 120, message = "Department must be 120 characters or fewer")
+    private String department;
+
+    @Size(max = 40, message = "Academic year must be 40 characters or fewer")
+    private String academicYear;
+
     public RegisterRequest() {
     }
 
@@ -30,5 +36,21 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
     }
 }
