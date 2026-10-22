@@ -24,19 +24,39 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
-        if (!response.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
-        return ResponseEntity.ok(response);
+        return roleLogin(request, "ADMIN");
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/auth/admin/login")
+    public ResponseEntity<LoginResponse> adminLogin(@Valid @RequestBody LoginRequest request) {
+        return roleLogin(request, "ADMIN");
+    }
+
+    @PostMapping("/auth/student/login")
+    public ResponseEntity<LoginResponse> studentLogin(@Valid @RequestBody LoginRequest request) {
+        return roleLogin(request, "STUDENT");
+    }
+
+    @PostMapping({"/auth/register", "/auth/admin/register"})
     public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(new RegistrationResponse("Registration successful. Please log in."));
+    }
+
+    @PostMapping("/auth/student/register")
+    public ResponseEntity<RegistrationResponse> registerStudent(@Valid @RequestBody RegisterRequest request) {
+        authService.registerStudent(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(new RegistrationResponse("Student registration successful. Please log in."));
+    }
+
+    private ResponseEntity<LoginResponse> roleLogin(LoginRequest request, String role) {
+        LoginResponse response = authService.loginAsRole(request, role);
+        if (!response.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
     public static class RegistrationResponse {

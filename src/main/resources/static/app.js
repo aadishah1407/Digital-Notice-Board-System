@@ -149,7 +149,7 @@ loginForm.addEventListener('submit', async (event) => {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
   try {
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch('/api/auth/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -173,7 +173,7 @@ registerForm.addEventListener('submit', async (event) => {
   const username = document.getElementById('registerUsername').value.trim();
   const password = document.getElementById('registerPassword').value;
   try {
-    const response = await fetch('/api/auth/register', {
+    const response = await fetch('/api/auth/admin/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
