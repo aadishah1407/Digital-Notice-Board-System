@@ -4,6 +4,7 @@ import com.digitalnoticeboard.auth.model.User;
 import com.digitalnoticeboard.auth.repository.UserRepository;
 import com.digitalnoticeboard.notice.dto.NoticeRequest;
 import com.digitalnoticeboard.notice.dto.NoticeResponse;
+import com.digitalnoticeboard.notice.dto.StudentNoticeFiltersResponse;
 import com.digitalnoticeboard.notice.model.Notice;
 import com.digitalnoticeboard.notice.repository.NoticeRepository;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.digitalnoticeboard.auth.model.User;
+import java.util.ArrayList;
 
 @Service
 public class NoticeCreationService {
@@ -70,16 +71,35 @@ public class NoticeCreationService {
             .toList();
     }
 
-    public List<NoticeResponse> getNoticesForStudent(User student) {
-        if (student == null || student.getDepartment() == null || student.getAcademicYear() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student department and academic year are required");
-        }
-        return noticeRepository
-            .findByDepartmentIgnoreCaseAndAcademicYearIgnoreCaseAndExpiryDateGreaterThanEqualAndPublishedAtLessThanEqualOrderByPublishedAtDesc(
-                student.getDepartment(), student.getAcademicYear(), LocalDate.now(), LocalDateTime.now())
+    public List<NoticeResponse> getNoticesForStudent(String department, String academicYear) {
+        String departmentFilter = trimToNull(department);
+        String academicYearFilter = trimToNull(academicYear);
+        return noticeRepository.findActiveForStudent(departmentFilter, academicYearFilter, LocalDate.now(), LocalDateTime.now())
             .stream()
             .map(NoticeResponse::fromEntity)
             .toList();
+    }
+
+    public StudentNoticeFiltersResponse getStudentNoticeFilters(User student) {
+        if (student == null || !"ROLE_STUDENT".equalsIgnoreCase(student.getRole())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Student access is required");
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+        List<String> departments = new ArrayList<>(noticeRepository.findActiveDepartments(today, now));
+        List<String> academicYears = new ArrayList<>(noticeRepository.findActiveAcademicYears(today, now));
+        addOptionIfMissing(departments, student.getDepartment());
+        addOptionIfMissing(academicYears, student.getAcademicYear());
+        return new StudentNoticeFiltersResponse(departments, academicYears);
+    }
+
+    private void addOptionIfMissing(List<String> options, String value) {
+        String trimmedValue = trimToNull(value);
+        if (trimmedValue != null && options.stream().noneMatch(option -> option.equalsIgnoreCase(trimmedValue))) {
+            options.add(trimmedValue);
+            options.sort(String.CASE_INSENSITIVE_ORDER);
+        }
     }
 
     public NoticeResponse updateNotice(Long id, NoticeRequest request) {

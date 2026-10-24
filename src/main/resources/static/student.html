@@ -43,7 +43,15 @@
           <div><p class="eyebrow">STUDENT NOTICE BOARD</p><h2>Your notices</h2></div>
           <div class="topbar-actions"><span id="studentSessionMessage" class="user-chip"></span><button id="studentLogoutButton" type="button" class="secondary-button">Log out</button></div>
         </div>
-        <div class="dashboard-heading"><div><h3>For your department</h3><p id="studentFilterDescription"></p></div></div>
+        <div class="dashboard-heading student-board-heading">
+          <div><h3>Campus notices</h3><p id="studentFilterDescription"></p></div>
+        </div>
+        <form id="studentFilterForm" class="student-filter-bar">
+          <div class="field"><label for="departmentFilter">Department</label><select id="departmentFilter" name="department"><option value="">All departments</option></select></div>
+          <div class="field"><label for="academicYearFilter">Academic year</label><select id="academicYearFilter" name="academicYear"><option value="">All years</option></select></div>
+          <button type="submit">Apply filters</button>
+          <button id="clearStudentFilters" class="secondary-button" type="button">Clear</button>
+        </form>
         <p id="studentBoardMessage" class="message" role="status"></p>
         <div id="studentNoticeList" class="notice-list" aria-live="polite"></div>
       </section>

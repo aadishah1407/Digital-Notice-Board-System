@@ -122,12 +122,14 @@ label {
 
 input,
 textarea,
+select,
 button {
   font: inherit;
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   min-height: 50px;
   padding: 13px 15px;
@@ -150,7 +152,8 @@ textarea::placeholder {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   border-color: var(--teal);
   background: #fff;
   box-shadow: 0 0 0 4px rgba(15, 155, 142, 0.12);
@@ -529,6 +532,30 @@ button:active {
   padding: 28px 0 20px;
 }
 
+.student-board-heading {
+  padding-bottom: 12px;
+}
+
+.student-filter-bar {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto auto;
+  align-items: end;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.student-filter-bar button {
+  min-height: 50px;
+  margin: 0;
+}
+
+.student-filter-bar .secondary-button {
+  min-height: 50px;
+}
+
 .dashboard-heading h3 {
   font-size: 1.2rem;
 }
@@ -717,6 +744,10 @@ button:disabled {
   }
 
   .notice-list {
+    grid-template-columns: 1fr;
+  }
+
+  .student-filter-bar {
     grid-template-columns: 1fr;
   }
 
