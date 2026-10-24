@@ -77,13 +77,36 @@ function renderStudentNotices(notices) {
 async function loadStudentNotices() {
   showMessage(studentBoardMessage, 'Loading notices…');
   try {
-    const response = await fetch('/api/student/notices', { headers: studentHeaders() });
+    const query = new URLSearchParams();
+    const department = document.getElementById('departmentFilter').value;
+    const academicYear = document.getElementById('academicYearFilter').value;
+    if (department) query.set('department', department);
+    if (academicYear) query.set('academicYear', academicYear);
+    const queryString = query.toString();
+    const suffix = queryString ? `?${queryString}` : '';
+    const response = await fetch(`/api/student/notices${suffix}`, { headers: studentHeaders() });
     if (!response.ok) throw new Error(await getError(response, 'Could not load student notices.'));
     renderStudentNotices(await response.json());
     showMessage(studentBoardMessage, '');
   } catch (error) {
     showMessage(studentBoardMessage, error.message || 'Could not load student notices.', true);
   }
+}
+
+function fillOptions(select, values, allLabel, preferredValue) {
+  select.replaceChildren(new Option(allLabel, ''));
+  values.forEach((value) => select.add(new Option(value, value)));
+  if (preferredValue && values.some((value) => value.toLowerCase() === preferredValue.toLowerCase())) {
+    select.value = values.find((value) => value.toLowerCase() === preferredValue.toLowerCase());
+  }
+}
+
+async function loadStudentFilters(result) {
+  const response = await fetch('/api/student/notices/filters', { headers: studentHeaders() });
+  if (!response.ok) throw new Error(await getError(response, 'Could not load notice filters.'));
+  const filters = await response.json();
+  fillOptions(document.getElementById('departmentFilter'), filters.departments || [], 'All departments', result.department);
+  fillOptions(document.getElementById('academicYearFilter'), filters.academicYears || [], 'All years', result.academicYear);
 }
 
 document.getElementById('showStudentRegister').addEventListener('click', () => switchStudentForm(true));
@@ -108,12 +131,23 @@ studentLoginForm.addEventListener('submit', async (event) => {
     studentAuthSection.classList.add('hidden');
     studentBoardSection.classList.remove('hidden');
     document.getElementById('studentSessionMessage').textContent = `Signed in as ${result.username}`;
-    document.getElementById('studentFilterDescription').textContent = `${result.department || 'Your department'} · ${result.academicYear || 'Your academic year'}`;
+    document.getElementById('studentFilterDescription').textContent = 'Choose a department, academic year, or both to narrow the notices.';
+    await loadStudentFilters(result);
     await loadStudentNotices();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch {
     showMessage(studentLoginMessage, 'Sign in failed. Please try again.', true);
   }
+});
+
+document.getElementById('studentFilterForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  await loadStudentNotices();
+});
+
+document.getElementById('clearStudentFilters').addEventListener('click', async () => {
+  document.getElementById('studentFilterForm').reset();
+  await loadStudentNotices();
 });
 
 studentRegisterForm.addEventListener('submit', async (event) => {
