@@ -20,6 +20,7 @@ public class NoticeResponse {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate expiryDate;
     private String creatorUsername;
+    private boolean expired;
 
     public NoticeResponse() {
     }
@@ -33,6 +34,7 @@ public class NoticeResponse {
         response.setAcademicYear(notice.getAcademicYear());
         response.setPublishedAt(notice.getPublishedAt());
         response.setExpiryDate(notice.getExpiryDate());
+        response.setExpired(notice.getExpiryDate().isBefore(LocalDate.now()));
         if (notice.getCreator() != null) {
             response.setCreatorUsername(notice.getCreator().getUsername());
         }
@@ -101,5 +103,13 @@ public class NoticeResponse {
 
     public void setCreatorUsername(String creatorUsername) {
         this.creatorUsername = creatorUsername;
+    }
+
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
     }
 }
