@@ -107,6 +107,12 @@ function renderNotices(notices) {
     const heading = document.createElement('div');
     heading.className = 'notice-card-heading';
     heading.append(title, department);
+    if (notice.expired) {
+      const expiredTag = document.createElement('span');
+      expiredTag.className = 'notice-tag expired-notice-tag';
+      expiredTag.textContent = 'Expired';
+      heading.append(expiredTag);
+    }
     const actions = document.createElement('div');
     actions.className = 'notice-actions';
     const editButton = document.createElement('button');
