@@ -622,6 +622,11 @@ button:active {
   font-weight: 800;
 }
 
+.expired-notice-tag {
+  background: #fff0f0;
+  color: #a12d37;
+}
+
 .notice-description {
   display: -webkit-box;
   overflow: hidden;
