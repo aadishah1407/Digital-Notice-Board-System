@@ -1,10 +1,10 @@
 # Multi-stage build for the Spring Boot application (Java 17).
-# Run the full test suite during the image build as an additional deployment gate.
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn --batch-mode --no-transfer-progress clean verify
+# GitHub Actions runs the full test suite before Render deploys.
+RUN mvn --batch-mode --no-transfer-progress clean package -DskipTests
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
