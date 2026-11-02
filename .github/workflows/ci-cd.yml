@@ -29,7 +29,16 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Start Docker daemon for MongoDB integration tests
+        run: |
+          if ! docker info >/dev/null 2>&1; then
+            sudo systemctl start docker || sudo service docker start
+          fi
+          docker info
+
       - name: Compile, run JUnit tests and package
+        env:
+          DOCKER_HOST: unix:///var/run/docker.sock
         run: mvn --batch-mode --no-transfer-progress clean verify
 
       - name: Build production Docker image
