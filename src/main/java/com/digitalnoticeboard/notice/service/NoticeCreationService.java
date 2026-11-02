@@ -7,6 +7,7 @@ import com.digitalnoticeboard.notice.dto.NoticeResponse;
 import com.digitalnoticeboard.notice.dto.StudentNoticeFiltersResponse;
 import com.digitalnoticeboard.notice.model.Notice;
 import com.digitalnoticeboard.notice.repository.NoticeRepository;
+import com.digitalnoticeboard.notice.repository.NoticeQueryRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,10 +22,13 @@ public class NoticeCreationService {
 
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
+    private final NoticeQueryRepository noticeQueryRepository;
 
-    public NoticeCreationService(NoticeRepository noticeRepository, UserRepository userRepository) {
+    public NoticeCreationService(NoticeRepository noticeRepository, UserRepository userRepository,
+                                 NoticeQueryRepository noticeQueryRepository) {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
+        this.noticeQueryRepository = noticeQueryRepository;
     }
 
     public NoticeResponse createNotice(NoticeRequest request, String creatorUsername) {
@@ -59,7 +63,8 @@ public class NoticeCreationService {
         notice.setAcademicYear(academicYear);
         notice.setPublishedAt(publishedAt);
         notice.setExpiryDate(expiryDate);
-        notice.setCreator(creator);
+        notice.setCreatorId(creator.getId());
+        notice.setCreatorUsername(creator.getUsername());
 
         Notice savedNotice = noticeRepository.save(notice);
         return NoticeResponse.fromEntity(savedNotice);
@@ -74,7 +79,7 @@ public class NoticeCreationService {
     public List<NoticeResponse> getNoticesForStudent(String department, String academicYear) {
         String departmentFilter = trimToNull(department);
         String academicYearFilter = trimToNull(academicYear);
-        return noticeRepository.findActiveForStudent(departmentFilter, academicYearFilter, LocalDate.now(), LocalDateTime.now())
+        return noticeQueryRepository.findActiveForStudent(departmentFilter, academicYearFilter, LocalDate.now(), LocalDateTime.now())
             .stream()
             .map(NoticeResponse::fromEntity)
             .toList();
@@ -87,8 +92,8 @@ public class NoticeCreationService {
 
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
-        List<String> departments = new ArrayList<>(noticeRepository.findActiveDepartments(today, now));
-        List<String> academicYears = new ArrayList<>(noticeRepository.findActiveAcademicYears(today, now));
+        List<String> departments = new ArrayList<>(noticeQueryRepository.findActiveDepartments(today, now));
+        List<String> academicYears = new ArrayList<>(noticeQueryRepository.findActiveAcademicYears(today, now));
         addOptionIfMissing(departments, student.getDepartment());
         addOptionIfMissing(academicYears, student.getAcademicYear());
         return new StudentNoticeFiltersResponse(departments, academicYears);
@@ -102,7 +107,7 @@ public class NoticeCreationService {
         }
     }
 
-    public NoticeResponse updateNotice(Long id, NoticeRequest request) {
+    public NoticeResponse updateNotice(String id, NoticeRequest request) {
         if (request == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Notice payload is required");
         }
@@ -136,7 +141,7 @@ public class NoticeCreationService {
         return NoticeResponse.fromEntity(noticeRepository.save(notice));
     }
 
-    public void deleteNotice(Long id) {
+    public void deleteNotice(String id) {
         if (!noticeRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notice not found.");
         }
