@@ -57,4 +57,20 @@ jobs:
         run: |
           echo "## CI passed" >> "$GITHUB_STEP_SUMMARY"
           echo "Maven verification, JUnit tests and Docker image build passed." >> "$GITHUB_STEP_SUMMARY"
-          echo "Render is configured to deploy this commit after GitHub checks pass (Render Blueprint: render.yaml)." >> "$GITHUB_STEP_SUMMARY"
+          echo "The Render deploy hook will be called only after this job's validation steps succeed." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Deploy to Render after successful CI
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::error::Missing GitHub Actions secret RENDER_DEPLOY_HOOK_URL. Add the Render deploy hook URL under repository Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+          # Deploy this exact tested commit, not a newer commit that may still be running CI.
+          deploy_url="${RENDER_DEPLOY_HOOK_URL}&ref=${GITHUB_SHA}"
+          response="$(curl --fail --silent --show-error --request POST "$deploy_url")"
+          echo "$response"
+          echo "Render accepted the deployment request for commit ${GITHUB_SHA}." >> "$GITHUB_STEP_SUMMARY"
