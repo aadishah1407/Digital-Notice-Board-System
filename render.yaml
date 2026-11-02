@@ -6,7 +6,8 @@ services:
     branch: main
     region: singapore
     plan: free
-    autoDeployTrigger: checksPass
+    # GitHub Actions triggers the deploy hook after successful CI checks.
+    autoDeployTrigger: off
     healthCheckPath: /
     envVars:
       # Paste the MongoDB Atlas application connection string as a secret.
