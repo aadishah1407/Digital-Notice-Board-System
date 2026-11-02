@@ -4,7 +4,7 @@ services:
     name: dnb-mysql
     runtime: docker
     repo: https://github.com/render-examples/mysql.git
-    branch: master
+    branch: main
     region: singapore
     plan: 0.5c-512mb
     autoDeployTrigger: off
