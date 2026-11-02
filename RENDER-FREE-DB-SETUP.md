@@ -19,7 +19,7 @@ TiDB Cloud Starter's free allowance is quota-based. When the free quota is reach
 2. Create a Blueprint Instance and select `aadishah1407/Digital-Notice-Board-System`, branch `main`.
 3. Render reads the root `render.yaml` and creates the `digital-notice-board-system` web service on the Free plan.
 4. When prompted for environment variables, enter:
-   - `DB_URL`: `jdbc:mysql://<TI​​DB_HOST>:4000/digital_notice_board?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3`
+   - `DB_URL`: `jdbc:mysql://<TIDB_HOST>:4000/digital_notice_board?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3`
    - `DB_USERNAME`: the username shown in TiDB's Connect dialog
    - `DB_PASSWORD`: the generated TiDB password
    - `ADMIN_USERNAME`: a new administrator username
