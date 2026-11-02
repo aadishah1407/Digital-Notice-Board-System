@@ -8,6 +8,7 @@ import com.digitalnoticeboard.auth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -98,7 +99,12 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "That username is already registered");
         }
 
-        userRepository.save(new User(username, passwordEncoder.encode(request.getPassword()), role, department, academicYear));
+        try {
+            userRepository.save(new User(username, passwordEncoder.encode(request.getPassword()), role, department, academicYear));
+        } catch (DuplicateKeyException exception) {
+            // The unique MongoDB index also protects against simultaneous registrations.
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "That username is already registered");
+        }
     }
 
     private String normalizeRole(String role) {
