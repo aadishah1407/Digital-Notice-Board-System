@@ -47,7 +47,7 @@ public class NoticeController {
     }
 
     @PutMapping("/notices/{id}")
-    public NoticeResponse updateNotice(@PathVariable Long id, @Valid @RequestBody NoticeRequest request) {
+    public NoticeResponse updateNotice(@PathVariable String id, @Valid @RequestBody NoticeRequest request) {
         return noticeCreationService.updateNotice(id, request);
     }
 
