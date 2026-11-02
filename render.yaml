@@ -1,28 +1,4 @@
 services:
-  # Private MySQL 8 instance using Render's maintained example repository.
-  - type: pserv
-    name: dnb-mysql
-    runtime: docker
-    repo: https://github.com/render-examples/mysql.git
-    branch: main
-    region: singapore
-    plan: 0.5c-512mb
-    autoDeployTrigger: off
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 1
-    envVars:
-      - key: MYSQL_DATABASE
-        value: digital_notice_board
-      - key: MYSQL_USER
-        value: noticeboard_user
-      - key: MYSQL_PASSWORD
-        generateValue: true
-      - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
-
-  # Spring Boot web service. Render deploys only after GitHub Actions checks pass.
   - type: web
     name: digital-notice-board-system
     runtime: docker
@@ -33,18 +9,14 @@ services:
     autoDeployTrigger: checksPass
     healthCheckPath: /
     envVars:
+      # TiDB Cloud Starter is MySQL-protocol compatible. Set these values
+      # during Blueprint setup; do not commit credentials to source control.
       - key: DB_URL
-        value: jdbc:mysql://dnb-mysql:3306/digital_notice_board
+        sync: false
       - key: DB_USERNAME
-        fromService:
-          type: pserv
-          name: dnb-mysql
-          envVarKey: MYSQL_USER
+        sync: false
       - key: DB_PASSWORD
-        fromService:
-          type: pserv
-          name: dnb-mysql
-          envVarKey: MYSQL_PASSWORD
+        sync: false
       - key: ADMIN_USERNAME
         sync: false
       - key: ADMIN_PASSWORD
