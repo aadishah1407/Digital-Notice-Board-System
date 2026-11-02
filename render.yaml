@@ -9,13 +9,8 @@ services:
     autoDeployTrigger: checksPass
     healthCheckPath: /
     envVars:
-      # TiDB Cloud Starter is MySQL-protocol compatible. Set these values
-      # during Blueprint setup; do not commit credentials to source control.
-      - key: DB_URL
-        sync: false
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
+      # Paste the MongoDB Atlas application connection string as a secret.
+      - key: MONGODB_URI
         sync: false
       - key: ADMIN_USERNAME
         sync: false
