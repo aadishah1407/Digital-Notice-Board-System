@@ -52,7 +52,7 @@ public class NoticeController {
     }
 
     @DeleteMapping("/notices/{id}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteNotice(@PathVariable String id) {
         noticeCreationService.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
