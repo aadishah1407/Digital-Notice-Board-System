@@ -31,7 +31,7 @@ class MongoPersistenceIntegrationTest {
     @Container
     static final MongoDBContainer MONGO = new MongoDBContainer(
         DockerImageName.parse("mongo:7.0")
-    ).withReplicaSet();
+    );
 
     @DynamicPropertySource
     static void configureMongo(DynamicPropertyRegistry registry) {
