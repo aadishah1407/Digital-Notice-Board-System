@@ -1,10 +1,11 @@
 package com.digitalnoticeboard.notice.dto;
 
 import com.digitalnoticeboard.notice.model.Notice;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class NoticeResponse {
     private String id;
@@ -12,13 +13,8 @@ public class NoticeResponse {
     private String description;
     private String department;
     private String academicYear;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime publishedAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Instant publishedAt;
     private LocalDate expiryDate;
-
     private String creatorUsername;
     private boolean expired;
 
@@ -34,7 +30,7 @@ public class NoticeResponse {
         response.setAcademicYear(notice.getAcademicYear());
         response.setPublishedAt(notice.getPublishedAt());
         response.setExpiryDate(notice.getExpiryDate());
-        response.setExpired(notice.getExpiryDate().isBefore(LocalDate.now()));
+        response.setExpired(notice.getExpiryDate().isBefore(LocalDate.now(ZoneId.of("Asia/Kolkata"))));
         response.setCreatorUsername(notice.getCreatorUsername());
         return response;
     }
@@ -49,8 +45,11 @@ public class NoticeResponse {
     public void setDepartment(String department) { this.department = department; }
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
-    public LocalDateTime getPublishedAt() { return publishedAt; }
-    public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
+    public Instant getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(Instant publishedAt) { this.publishedAt = publishedAt; }
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt == null ? null : publishedAt.atZone(ZoneId.systemDefault()).toInstant();
+    }
     public LocalDate getExpiryDate() { return expiryDate; }
     public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
     public String getCreatorUsername() { return creatorUsername; }

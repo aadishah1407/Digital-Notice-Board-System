@@ -38,6 +38,12 @@ function switchStudentForm(showRegister) {
   showMessage(studentRegisterMessage, '');
 }
 
+function formatIndianDate(value, options = {}) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...options }).format(date);
+}
+
 function renderStudentNotices(notices) {
   studentNoticeList.replaceChildren();
   if (!notices.length) {
@@ -65,9 +71,9 @@ function renderStudentNotices(notices) {
     const meta = document.createElement('div');
     meta.className = 'notice-meta';
     const published = document.createElement('span');
-    published.textContent = `Published ${new Date(notice.publishedAt).toLocaleString()}`;
+    published.textContent = `Published ${formatIndianDate(notice.publishedAt, { dateStyle: 'medium', timeStyle: 'short', hour12: true })}`;
     const expires = document.createElement('span');
-    expires.textContent = `Expires ${new Date(`${notice.expiryDate}T00:00:00`).toLocaleDateString()}`;
+    expires.textContent = `Expires ${formatIndianDate(`${notice.expiryDate}T00:00:00Z`, { dateStyle: 'medium' })}`;
     meta.append(published, expires);
     card.append(heading, description, meta);
     studentNoticeList.append(card);

@@ -3,8 +3,10 @@ package com.digitalnoticeboard.notice.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Document(collection = "notices")
 public class Notice {
@@ -15,7 +17,7 @@ public class Notice {
     private String description;
     private String department;
     private String academicYear;
-    private LocalDateTime publishedAt;
+    private Instant publishedAt;
     private LocalDate expiryDate;
 
     // Reference fields only; do not embed user credentials in notice documents.
@@ -35,8 +37,11 @@ public class Notice {
     public void setDepartment(String department) { this.department = department; }
     public String getAcademicYear() { return academicYear; }
     public void setAcademicYear(String academicYear) { this.academicYear = academicYear; }
-    public LocalDateTime getPublishedAt() { return publishedAt; }
-    public void setPublishedAt(LocalDateTime publishedAt) { this.publishedAt = publishedAt; }
+    public Instant getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(Instant publishedAt) { this.publishedAt = publishedAt; }
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt == null ? null : publishedAt.atZone(ZoneId.systemDefault()).toInstant();
+    }
     public LocalDate getExpiryDate() { return expiryDate; }
     public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
     public String getCreatorId() { return creatorId; }

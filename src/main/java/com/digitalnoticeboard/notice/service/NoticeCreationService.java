@@ -12,13 +12,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NoticeCreationService {
+    private static final ZoneId APP_TIME_ZONE = ZoneId.of("Asia/Kolkata");
 
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
@@ -50,7 +53,7 @@ public class NoticeCreationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expiry date is required");
         }
 
-        LocalDateTime publishedAt = request.getPublishedAt() == null ? LocalDateTime.now() : request.getPublishedAt();
+        Instant publishedAt = Instant.now();
         validateExpiryDate(expiryDate, publishedAt);
 
         User creator = userRepository.findByUsername(creatorUsername)
@@ -79,7 +82,12 @@ public class NoticeCreationService {
     public List<NoticeResponse> getNoticesForStudent(String department, String academicYear) {
         String departmentFilter = trimToNull(department);
         String academicYearFilter = trimToNull(academicYear);
-        return noticeQueryRepository.findActiveForStudent(departmentFilter, academicYearFilter, LocalDate.now(), LocalDateTime.now())
+        return noticeQueryRepository.findActiveForStudent(
+                departmentFilter,
+                academicYearFilter,
+                LocalDate.now(APP_TIME_ZONE),
+                LocalDateTime.now(APP_TIME_ZONE)
+            )
             .stream()
             .map(NoticeResponse::fromEntity)
             .toList();
@@ -90,8 +98,8 @@ public class NoticeCreationService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Student access is required");
         }
 
-        LocalDate today = LocalDate.now();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = LocalDate.now(APP_TIME_ZONE);
+        LocalDateTime now = LocalDateTime.now(APP_TIME_ZONE);
         List<String> departments = new ArrayList<>(noticeQueryRepository.findActiveDepartments(today, now));
         List<String> academicYears = new ArrayList<>(noticeQueryRepository.findActiveAcademicYears(today, now));
         addOptionIfMissing(departments, student.getDepartment());
@@ -119,7 +127,6 @@ public class NoticeCreationService {
         String description = trimToNull(request.getDescription());
         String department = trimToNull(request.getDepartment());
         String academicYear = trimToNull(request.getAcademicYear());
-        LocalDateTime publishedAt = request.getPublishedAt() == null ? notice.getPublishedAt() : request.getPublishedAt();
         LocalDate expiryDate = request.getExpiryDate();
 
         if (title == null || description == null || department == null || academicYear == null) {
@@ -129,6 +136,7 @@ public class NoticeCreationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expiry date is required");
         }
 
+        Instant publishedAt = notice.getPublishedAt();
         validateExpiryDate(expiryDate, publishedAt);
 
         notice.setTitle(title);
@@ -148,8 +156,9 @@ public class NoticeCreationService {
         noticeRepository.deleteById(id);
     }
 
-    private void validateExpiryDate(LocalDate expiryDate, LocalDateTime publishedAt) {
-        if (!expiryDate.isAfter(publishedAt.toLocalDate())) {
+    private void validateExpiryDate(LocalDate expiryDate, Instant publishedAt) {
+        LocalDate publicationDate = publishedAt.atZone(APP_TIME_ZONE).toLocalDate();
+        if (!expiryDate.isAfter(publicationDate)) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Expiry date must be later than the publication date."

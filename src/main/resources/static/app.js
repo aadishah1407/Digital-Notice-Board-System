@@ -70,10 +70,17 @@ function showDashboard() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function toDateTimeLocalValue(value) {
+  const date = new Date(value);
+  const pad = (part) => String(part).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 function formatDate(value, options = { dateStyle: 'medium' }) {
   if (!value) return '—';
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, options).format(date);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...options }).format(date);
 }
 
 function renderNotices(notices) {
@@ -207,10 +214,8 @@ function openCreatePage() {
   document.getElementById('createHeading').textContent = 'Create a notice';
   submitNoticeButton.textContent = 'Create notice';
   setMessage(noticeMessage, '');
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  publishedAtInput.value = now.toISOString().slice(0, 16);
-  expiryDateInput.value = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  publishedAtInput.value = toDateTimeLocalValue(new Date());
+  expiryDateInput.value = toDateTimeLocalValue(new Date(Date.now() + 7 * 86400000)).slice(0, 10);
   updateExpiryDateValidity();
   document.getElementById('title').focus();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -248,7 +253,7 @@ function openEditPage(notice) {
   document.getElementById('description').value = notice.description;
   document.getElementById('department').value = notice.department;
   document.getElementById('academicYear').value = notice.academicYear;
-  publishedAtInput.value = notice.publishedAt.slice(0, 16);
+  publishedAtInput.value = toDateTimeLocalValue(notice.publishedAt).slice(0, 16);
   expiryDateInput.value = notice.expiryDate;
   setMessage(noticeMessage, '');
   updateExpiryDateValidity();
@@ -325,7 +330,6 @@ noticeForm.addEventListener('submit', async (event) => {
     description: document.getElementById('description').value.trim(),
     department: document.getElementById('department').value.trim(),
     academicYear: document.getElementById('academicYear').value.trim(),
-    publishedAt: `${document.getElementById('publishedAt').value}:00`,
     expiryDate: document.getElementById('expiryDate').value
   };
 

@@ -8,13 +8,16 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Repository
 public class NoticeQueryRepository {
+    private static final ZoneId APP_TIME_ZONE = ZoneId.of("Asia/Kolkata");
     private final MongoTemplate mongoTemplate;
 
     public NoticeQueryRepository(MongoTemplate mongoTemplate) {
@@ -51,8 +54,9 @@ public class NoticeQueryRepository {
     }
 
     private Query activeNoticesQuery(LocalDate today, LocalDateTime now) {
+        Instant publicationCutoff = now.atZone(APP_TIME_ZONE).toInstant();
         Criteria criteria = Criteria.where("expiryDate").gte(today)
-            .and("publishedAt").lte(now);
+            .and("publishedAt").lte(publicationCutoff);
         return new Query(criteria);
     }
 }
