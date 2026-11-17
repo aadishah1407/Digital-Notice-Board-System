@@ -101,6 +101,14 @@ class MongoPersistenceIntegrationTest {
             now.minusHours(2), today.plusDays(5)
         ));
         noticeRepository.save(activeNotice(
+            "CS Workshop", "Computer Science", "2025-2026",
+            now.minusHours(3), today.plusDays(6)
+        ));
+        noticeRepository.save(activeNotice(
+            "IT Exam", "Information Technology", "2026-2027",
+            now.minusHours(4), today.plusDays(7)
+        ));
+        noticeRepository.save(activeNotice(
             "Expired CS Notice", "Computer Science", "2026-2027",
             now.minusDays(4), today.minusDays(1)
         ));
